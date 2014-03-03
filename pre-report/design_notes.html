@@ -132,7 +132,7 @@
                 <a id="modal"><h1>Message Center's Modal</h1></a>
                 <blockquote>
                     Currently living and working at popmedic.com.  Sql files are 
-                    <a href="https://github.com/popmedic/epcr/tree/master/mc/sql">here</a>.
+                    <a href="https://github.com/popmedic/epcr/tree/master/mc/sql" target="_blank">here</a>.
                     <blockquote>
                         <a id="users"><h1>Users</h1></a>
                         <blockquote>
@@ -167,15 +167,9 @@
                                     </blockquote>
                                 </li>
                                 <li>
-                                    <h2>typevar</h2> varchar(2056)
+                                    <h2>pubkey</h2> varchar(2056)
                                     <blockquote>
-                                        this field is used to store specific variables associated with the different base client types.
-                                        currently this field is defined as:
-                                        <ol>
-                                            <li>base - &lt;public key for this user&gt;</li>
-                                            <li>native - &lt;undefined&gt;</li>
-                                            <li>mms - &lt;senders phone #&gt;</li>
-                                        </ol>
+                                        this field is used to store the users public key.
                                     </blockquote>
                                 </li>
                                 <li>
@@ -285,7 +279,8 @@
                 
                 <a id="controller"><h1>Message Center's Controller</h1></a>
                 <blockquote>
-                    define the controller
+                    The Message Center Controller (mcc) is an exposed set of RESTful API HTTP and HTTPS requests.  All requests must contain
+                    a user, password, function, and an optional vars (JSON encoded variables to pass the function ie. { :to => 195, :from => 200 }
                     <blockquote>
                         <a id="getters"><h1>Getters</h1></a>
                         <ul>
@@ -298,6 +293,11 @@
                     </blockquote>
                 </blockquote>
                 
+                <a id="mcadmin"><h1>Message Center Admin (mcadmin)</h1></a>
+                <blockquote>
+                    Current mcadmin is: <a href="https://p3nlmysqladm002.secureserver.net/grid55/119" target="_blank">phpMyAdmin</a>
+                </blockquote>
+                
                 <a id="message"><h1>Message</h1></a>
                 <blockquote>
                     define the message
@@ -308,7 +308,6 @@
                 <blockquote>
                     define the security
                 </blockquote>
-                <p></p>
             </blockquote>
             
             <a id="base"><h1>Base Client (base)</h1></a>
