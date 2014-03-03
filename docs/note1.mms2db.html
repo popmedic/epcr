@@ -98,18 +98,18 @@
                                 </a>
                         </li>
                         <li>
-                            Can use: <a href="http://wammu.eu/">Wammu and Gammu</a> <a href="https://github.com/gammu/gammu">(Development)</a>
+                            Use: <a href="http://wammu.eu/">Wammu and Gammu</a> <a href="https://github.com/gammu/gammu">(Development)</a>
+                            <blockquote>
+                                Using gammu on a linux server, see <a href="http://wammu.eu/docs/pdf/smsd.pdf">Gammu SMSD</a> page 22 talks about
+                                how to use with MMS.  Using SMSD, we will have a handler for when messages are recieved, and config it with a 
+                                Null Backend, that way nothing is stored on the gateway, only the encoded messages in the MC database. 
+                                The handler will then be a full wrapper of the modems SMS/MMS services.  See more in the <a href="http://wammu.eu/docs/pdf/smsd.pdf">manual</a> on page 21, 
+                                5.2 Enviroment.
+                            </blockquote>
                         </li>
                     </ul>
                 </li>
             </ul>
-            The MMSG psuedo code:
-            <pre>LOOP THOUGH MODEMS AS MODEM{
-        IF MODEM HAS NEW MESSAGE{
-            ENCODE MESSAGE WITH MODEM(CLIENT PUBLIC KEY)
-            UPLOAD MESAGE TO MC AS MESSAGE TO MODEM(CLIENT ID)
-        }
-    }</pre>
         </components>
 <!--        
 Modem:
