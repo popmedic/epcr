@@ -1,0 +1,218 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width">
+        <link href="favicon.ico" rel="icon" type="image/x-icon" />
+        <title>pre_report html messanger.</title>
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        <script src="md5.js"></script>
+        <style>
+            body{
+                color: #000;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            #messanger .tbl{
+                display:table;
+            }
+            #messanger .row{
+                display: table-row;
+            }
+            #messanger .cel{
+                display: table-cell;
+                vertical-align: top;
+            }
+            #messanger #left-panel{
+                width:96px;
+                max-width: 96px;
+                min-width: 96px;
+                margin: 2px;
+                padding: 4px;
+                border: #000 1px solid;
+                border-radius: 6px 0px 0px 6px;
+                max-height:300px;
+                overflow: auto;
+            }
+            #messanger #right-panel #top{
+                margin: 2px;
+                padding: 4px;
+                border: #000 1px solid;
+                border-radius: 0px 6px 0px 0px;
+            }
+            #messanger #right-panel #top #msg-box{
+                height: 200px;
+                max-height: 200px;
+                margin: 2px;
+                padding: 4px;
+                width:200px;
+                max-width:200px;
+                overflow: auto;
+            }
+            #messanger #right-panel #bottom{
+                height: 24px;
+                margin: 2px;
+                padding: 4px;
+                width:200px;
+                max-width:200px;
+                border: #000 1px solid;
+                border-radius: 0px 0px 6px 0px;
+            }
+            #messanger .client{
+                margin: 2px;
+                padding: 4px;
+                border: #000 1px solid;
+                border-radius: 4px;
+                cursor: pointer;
+                
+            }
+            #messanger .client:hover{
+                background-color: #CCC;
+            }
+            #messanger .client-selected{
+                background-color: #000;
+                color: #FF0;
+                border-color: #FF0;
+            }
+            #messanger .client-me{
+                font-style: italic;
+                background-color: #11F;
+                color: #FFF;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            $(document).ready(function(){
+                draw_login();
+            });
+            function draw_login(){
+                if($('body #login').length > 0) $('body #login').remove();
+                $("body").append('<div id="login">'+
+                                    '<input id="name" type="text" placeholder="Name" />'+
+                                    '<input id="password" type="password" placeholder="Password" />'+
+                                    '<button id="btn">Login</button>'+
+                                 '</div>');
+                $('#login #btn').click(function(e){
+                    login();
+                });
+            }
+            function draw_messanger(id, name, password){
+                if($('body #messanger').length > 0) $('body #messanger').remove();
+                $('body').append('<div id="messanger">'+
+                                 '<div class="tbl"><div class="row">'+
+                                 '<div class="cel" id="left-panel">'+
+                                 '<div id="clients"></div></div>'+
+                                 '<div class="cel" id="right-panel">'+
+                                 '<div class="tbl"><div class="row"><div class="cel" id="top">'+
+                                 '<div id="msg-box"></div></div></div>'+
+                                 '<div class="row"><div class="cel" id="bottom">'+
+                                 '<input type="text" id="msg-text" placeholder="Message" />'+
+                                 '<button id="send-btn">Send</button></div></div></div>'+
+                                 '</div></div></div>'+
+                                 '</div>');
+                url = "../server/getClients.php?"+
+                      "name="+encodeURIComponent(name)+"&password="+encodeURIComponent(password);
+                $.getJSON(url, function(data) {
+                    if(data.ERROR == undefined){
+                        rows = data.SUCCESS;
+                        for(i=0;i<rows.length;i++){
+                            if(rows[i]['name'].replace(/^\W/,'').replace(/\W?/,'') == name){
+                                $('body #messanger #left-panel #clients').append('<div id="client'+
+                                                                    rows[i].id+'" class="client client-me">'+
+                                                                    rows[i]['name']+'</div>');
+                                console.log(rows[i]['name']);
+                            }
+                            else{
+                                $('body #messanger #left-panel #clients').append('<div id="client'+
+                                                                                 rows[i].id+'" class="client">'+
+                                                                                 rows[i]['name']+'</div>');  
+                            }
+                        }
+                        $('body #messanger #left-panel .client').click(function(){
+                            $('body #messanger .client-selected').removeClass('client-selected');
+                            $(this).addClass('client-selected');
+                        });
+                        $('body #messanger #send-btn').click(function(e){
+                            msg = $('#messanger #msg-text').val();
+                            if($('#messanger #clients .client-selected').length != 1){
+                                alert('No client selected to send message to.');
+                                return;
+                            }
+                            to_id = parseInt($('#messanger #clients .client-selected').attr('id').replace(/^client/,
+                                                                                                          ''));
+                            if(msg == ''){
+                                alert('No message entered to send.');
+                                return;
+                            }
+                            url2 = '../server/sendMessage.php?'+
+                                   'name='+encodeURIComponent(name)+
+                                   '&password='+encodeURIComponent(password)+
+                                   '&to_id='+encodeURIComponent(to_id)+
+                                   '&message='+encodeURIComponent(msg);
+                            $.getJSON(url2, function(data2){
+                                if(data2.ERROR != undefined){
+                                    alert(data2.ERROR);   
+                                }
+                                else{
+                                    msg2 = $('#messanger #msg-text').val();
+                                    $('#messanger #msg-text').val('');
+                                    $('body #messanger #msg-box').prepend('<div class="messages"><u>'+
+                                                                          name+'</u>: '+msg2+'</div>');
+                                }   
+                            });
+                        }); 
+                        setInterval(function(){
+                            url3 = '../server/checkMessages.php?'+
+                                   'name='+encodeURIComponent(name)+
+                                   '&password='+encodeURIComponent(password);
+                            $.getJSON(url3, function(data3){
+                                if(data3.ERROR != undefined){
+                                    alert(data3.ERROR);   
+                                }
+                                else{
+                                    nmsgs = data3.SUCCESS;
+                                    if(nmsgs != 0){
+                                        for(i=0;i<nmsgs.length;i++){
+                                            row = nmsgs[i];
+                                            tn = $('#messanger #clients #client'+String(row.from_id)).text();
+                                            $('body #messanger #msg-box').prepend('<div class="messages"><u>'+
+                                                                          tn+'</u>: '+row['message']+'</div>');
+                                        }
+                                    }
+                                }
+                            });
+                        }, 500);
+                        $('body #login').remove();
+                    }
+                    else{
+                        $('body #messanger').html('<div id="error">'+data.ERROR+'</div>');
+                        draw_login();
+                        alert("MESSANGER ERROR: "+data.ERROR);
+                    }
+                });
+            }
+            function login(){
+                name = $('#login #name').val();
+                password = md5($('#login #password').val());
+                $('#login').html('<div style="text-align:center;">Loading</div>');
+                url = "../server/login.php?name="+encodeURIComponent(name)+"&password="+encodeURIComponent(password);
+                $.getJSON(url, function(data) {
+                    if(data.ERROR == undefined){
+                        id = parseInt(data.SUCCESS);
+                        /*$('#login').html('<div id="name" style="display:none;">'+name+'</div>'+
+                                         '<div id="password" style="display:none;">'+password+'</div>'+
+                                         '<div id="id" style="display:none;">'+String(id)+'</div>'+
+                                         '<div id="greeting">'+name+'</div>');*/
+                        console.log('passed in with id: ' + String(id));
+                        draw_messanger(id, name, password);
+                    }
+                    else{
+                        $('body #login').remove();
+                        draw_login();
+                        alert("UNABLE TO LOGIN: "+data.ERROR);
+                    }
+                });
+            }
+        </script>
+    </body>
+</html>
