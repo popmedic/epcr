@@ -1,0 +1,35 @@
+Current Breakdown:
+
+3 Components:
+Server
+Field-Client (ref. Field)
+Hospital-Client (ref. Hosp)
+
+Server:
+
+Objective- A lightweight database server accessed though SSL/TLS. Has 2 main objects - Clients and Messanger - to access a database verify that user is a client, and then sends or retrieves messages. 
+
+Current Techs-
+Language - PHP
+DB - MySql
+Transport- SSL/TLS marshaled with JSON
+Encoding- PGP
+
+Future-
+Backend admin tool for creating Hosp clients and keys, and adding Field clients.
+
+Field:
+
+Objective- A client application with the ablity to send messages to Hosp via the Server.  This client only sends, so no need for its own PGP keys, uses the plist to see which Hosp clients it can send to and their PGP public key.
+
+Current Techs-
+Native iOSX app.
+Language- Objective C
+
+Hosp:
+
+Objective- A client application with the ablity to retrieve messages from Server and display them in realtime to hospital ED staff.
+
+Current Techs-
+Native iOSX app.
+Language- Objective C.

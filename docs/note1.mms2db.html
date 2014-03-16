@@ -1,0 +1,146 @@
+<html>
+    <head>
+        <title>Design for a basic Text to Database System</title>
+        <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+        <style>
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            header {
+                font-size: 32px;
+                display: block;
+                padding-left: 6px;
+                font-weight: bold;
+            }
+            objective {
+                font-size: 16px;
+                padding-left: 12px; 
+                padding-right: 12px;
+                display: block;
+                
+            }
+            toc,
+            overview,
+            components {
+                font-size: 14px;
+                padding-left: 16px; 
+                padding-right: 16px;
+                display: block;
+                
+            }
+            overview h1,
+            components h1 {
+                font-size: 16px;
+            }
+            by {
+                font-size: 24px;
+            }
+            date {
+                font-size: 22px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            Design for a basic Text to Database System<br/>
+            <by>KScardina</by><br/>
+            <date>2014/03/02</date>
+        </header>
+        <p></p>
+        <hr/>
+        <p></p>
+        <objective>
+            This document is notes for kscardina on a simple design for a basic text to database system.  
+            A Multimedia Mesage Service message (mms) sent to a phone number will be recieved by a 
+            Multimedia Message Service Gateway (<a href="#mmsg">mmsg</a>).  At this point security tasks like PGP encoding can take
+            place.  After security is preformed the mmsg will upload the message to a Message Center (mc).
+        </objective>
+        <p></p>
+        <toc>
+            <ol>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#mmsg">Multimedia Message Service Gateway (mmsg)</a></li>
+                <li><a href="#mc">Message Center (mc)</a></li>
+            </ol>
+        </toc>
+        <p></p>
+        <overview>
+            <a id="overview"><h1>Overview</h1></a>
+            <blockquote>
+                Taking a text message in mms sent from a phone to a phone number and converting it into an entry
+                in a database can be broken into two parts.  We need a gateway that talks to modems that recieve the text message from the 
+                network carrier and processes them, and we need a repository, or database to place these messages.
+                <p></p>
+                The gateway used to recieve the text messages will be call our <a href="#mmsg">Multimedia Message Service Gateway or mmsg</a>.  
+                By attaching GSM USB modems, activated though a network carrier via SIM cards, we can use the 
+                <a href="http://wammu.eu/">Wammu</a> open source project and poll for SMS messages on the attached GSM modems.  We can then use 
+                the SMS messages, translate to MMS messages as needed, preform any security encodings, and upload the message to the database.
+                <p></p>
+                The repository, or database, that the messages will be placed in is called our <a href="#mc">Message Center or mc</a>.  
+                It will have a way to upload a message to the database by the client id and encoded with the client public key.  This mc is 
+                also the controller for the clients app to retreive these messages, but I will get to that latter.
+            </blockquote>
+        </overview>
+        <p></p>
+        <components>
+            <a id="mmsg"><h1>Multimedia Message Service Gateway - mmsg</h1></a>
+            <ul>
+                <li>Ubuntu Server at FortNavajo with GSM modems attached.</li>
+                <li>Each phone number monitored will have a modem for the number.</li>
+                <li>
+                    Modems:
+                    <ul>
+                        <li>
+                            Currently have located a GSM modem and ordered:
+                                <a href="https://www.bendigobanktelco.com.au/documents/Hardware/HUAWEI%20E173%20user%20guide.pdf">
+                                    Huawei E173 Unlocked HSDPA 7.2Mbps GSM 3G USB Modem
+                                </a>
+                        </li>
+                        <li>
+                            Use: <a href="http://wammu.eu/">Wammu and Gammu</a> <a href="https://github.com/gammu/gammu">(Development)</a>
+                            <blockquote>
+                                Using gammu on a linux server, see <a href="http://wammu.eu/docs/pdf/smsd.pdf">Gammu SMSD</a> page 22 talks about
+                                how to use with MMS.  Using SMSD, we will have a handler for when messages are recieved, and config it with a 
+                                Null Backend, that way nothing is stored on the gateway, only the encoded messages in the MC database. 
+                                The handler will then be a full wrapper of the modems SMS/MMS services.  See more in the <a href="http://wammu.eu/docs/pdf/smsd.pdf">manual</a> on page 21, 
+                                5.2 Enviroment.
+                            </blockquote>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </components>
+<!--        
+Modem:
+
+
+
+Can use: http://wammu.eu/ Wammu and Gammu 
+    Development: https://github.com/gammu/gammu
+    
+Use Gammu commandline or libGammu and talk to the modem to check SMS and use SMS headers 
+to download the MMS messages.
+
+Testing Environment:
+
+1) MMSG - Multimedia Message Service Gateway
+    Ubuntu Server at FortNavajo with GSM modems attached.
+        Each phone number monitored will have a modem for the number.
+        The MMSG psuedo code:
+            LOOP THOUGH MODEMS AS MODEM{
+                IF MODEM HAS NEW MESSAGE{
+                    ENCODE MESSAGE WITH MODEM(CLIENT PUBLIC KEY)
+                    UPLOAD MESAGE TO MC AS MESSAGE TO MODEM(CLIENT ID)
+                }
+            }
+2) MC - Message Center
+    GoDaddy Host Account at novum.popmedic.com
+        Exposes HTTPS RPCs for CLIENT
+        Current RPCs:
+            
+            
+3) CLIENT - Client for checking messages
+    CLIENT has a -->
+    </body>    
+</html>
